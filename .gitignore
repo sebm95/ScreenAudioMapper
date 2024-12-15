@@ -1,0 +1,17 @@
+# Python-related
+__pycache__/
+*.py[cod]
+
+# PyInstaller artifacts
+/build/
+dist/
+*.spec
+
+# Virtual environment
+venv/
+
+# Other files
+AudioLog.txt
+prototypes/
+screen_audio_mapping.json
+
