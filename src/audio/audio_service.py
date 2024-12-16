@@ -160,3 +160,29 @@ class AudioService:
             except Exception as e:
                 logger.error(f"Error getting default output device: {e}")
                 return None
+
+    @staticmethod
+    def validate_device_id(device_id: str) -> bool:
+        """Validate if a device ID still exists in the system."""
+        with COMContextManager():
+            try:
+                device_enumerator = comtypes.CoCreateInstance(
+                    CLSID_MMDeviceEnumerator,
+                    IMMDeviceEnumerator,
+                    comtypes.CLSCTX_INPROC_SERVER,
+                )
+                if not device_enumerator:
+                    return False
+
+                collection = device_enumerator.EnumAudioEndpoints(
+                    EDataFlow.eRender.value, DEVICE_STATE.ACTIVE.value
+                )
+                
+                for device in collection:
+                    if device.GetId() == device_id:
+                        return True
+                return False
+                
+            except Exception as e:
+                logger.error(f"Error validating device ID: {e}")
+                return False

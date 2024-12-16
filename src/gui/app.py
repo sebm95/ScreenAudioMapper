@@ -17,16 +17,17 @@ class App:
         self.root = root
         self.root.title("Screen to Audio Device Mapper")
         self.refresh_lists()
+        
         self.config = load_config()
-
+        
         self.pid_to_device = update_pid_mapping({}, self.config)
-
+        
         self.monitoring_thread = None
         self.stop_event = threading.Event()
-
+        
         if self.config:
             self.start_monitoring()
-
+        
         self.create_widgets()
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
