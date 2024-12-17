@@ -86,10 +86,23 @@ class AudioService:
 
                 volume = cast(device_object, POINTER(IAudioEndpointVolume))
                 vol_level = volume.GetMasterVolumeLevelScalar()
-                return round(vol_level * 100)
+                result = round(vol_level * 100)
+                # Explicitly release COM objects
+                volume.Release()
+                device_object.Release()
+                return result
             except Exception as e:
                 logger.error(f"Error getting volume: {e}")
                 return 0.0
+            finally:
+                # Ensure we attempt to release objects even if an error occurred
+                try:
+                    if 'volume' in locals():
+                        volume.Release()
+                    if 'device_object' in locals():
+                        device_object.Release()
+                except:
+                    pass
 
     @staticmethod
     def set_device_volume(device_id: str, volume_level: float) -> None:
@@ -104,8 +117,20 @@ class AudioService:
                 volume = cast(device_object, POINTER(IAudioEndpointVolume))
                 scalar_volume = max(0.0, min(volume_level / 100, 1.0))
                 volume.SetMasterVolumeLevelScalar(scalar_volume, None)
+                # Explicitly release COM objects
+                volume.Release()
+                device_object.Release()
             except Exception as e:
                 logger.error(f"Error setting volume: {e}")
+            finally:
+                # Ensure we attempt to release objects even if an error occurred
+                try:
+                    if 'volume' in locals():
+                        volume.Release()
+                    if 'device_object' in locals():
+                        device_object.Release()
+                except:
+                    pass
 
     @staticmethod
     def get_device_object(device_id: str):
