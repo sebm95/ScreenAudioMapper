@@ -61,7 +61,6 @@ class App:
             device_dropdown.grid(row=i + 1, column=1, padx=10, pady=5, sticky="w")
             device_dropdown.bind('<<ComboboxSelected>>', lambda e, s=screen["name"]: self.on_device_change(s))
             
-            # Volume control frame
             volume_frame = tk.Frame(self.root)
             volume_frame.grid(row=i + 1, column=2, padx=10, pady=5, sticky="w")
 
@@ -69,7 +68,6 @@ class App:
                                   command=lambda s=screen["name"]: self.adjust_volume(s, -5))
             minus_btn.pack(side=tk.LEFT, padx=2)
 
-            # Get initial volume
             current_volume = 0
             if device_var.get():
                 device_map = AudioService.get_all_output_devices()
@@ -147,13 +145,11 @@ class App:
         self.refresh_lists()
         self.create_widgets()
         
-        # Restore previous settings if possible
         for screen, device in current_mappings.items():
             if screen in self.mappings:
                 if device in self.audio_devices:
                     self.mappings[screen].set(device)
                     if screen in current_volumes and screen in self.volume_labels:
-                        # Convert "XX%" back to number
                         vol_str = current_volumes[screen].replace("%", "")
                         if vol_str.isdigit():
                             self.volume_labels[screen].config(text=current_volumes[screen])

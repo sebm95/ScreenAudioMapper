@@ -133,6 +133,24 @@ class AudioService:
                     pass
 
     @staticmethod
+    def mute_unmute_audio_process(process_name: str, value: int) -> None:
+        """Mute or unmute an audio process."""
+        with COMContextManager():
+            try:
+                sessions = AudioUtilities.GetAllSessions()
+                for session in sessions:
+                    if session.Process and session.Process.name() == process_name:
+                        if value == 2:
+                            value = 0 if session.SimpleAudioVolume.GetMute() == 1 else 1
+                        elif value == 1:
+                            value = 1
+                        elif value == 0:
+                            value = 0
+                        session.SimpleAudioVolume.SetMute(value, None)
+            except Exception as e:
+                logger.error(f"Error muting process: {e}")
+
+    @staticmethod
     def get_device_object(device_id: str):
         """Get the device object for a specific device ID."""
         with COMContextManager():
